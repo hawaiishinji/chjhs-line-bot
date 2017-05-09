@@ -2,10 +2,6 @@
   "name": "line-bot",
   "version": "1.0.0",
   "description": "line bot",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ."
-  },
   "author": "Hawaii Ho",
   "license": "ISC",
   "dependencies": {
