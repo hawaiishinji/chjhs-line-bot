@@ -10,12 +10,9 @@ var bot = linebot({
 
 var mongoDb;
 var url = 'mongodb://' + process.env.dbUsername + ':'+ process.env.dbPassword + '@ds137281.mlab.com:37281/line-bot';
-console.log(process.env.ChannelId);
-console.log(url);
 MongoClient.connect(url, function (err, db) {
     console.log("DB Connected correctly to server");
     mongoDb = db;
-    console.log(err);
     //insertId(db, '123', ()=>{});
     removeId(db, '123', ()=>{});
 });
@@ -66,14 +63,7 @@ var insertId = function (db, id, callback) {
  });
 };
 
-var findId = function (db, callback) {
-    // Get the documents collection
-    var collection = db.collection('subscribe');
-    // Find some documents
-    collection.find({}).toArray(function (err, docs) {
-        callback(docs);
-    });
-}
+
 
 var removeId = function (db, id, callback){
     // Get the documents collection
