@@ -35,22 +35,22 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
-    insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + "added")); 
+    insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + " added")); 
 });
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    removeId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + "removed")); 
+    removeId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + " removed")); 
 });
 
 bot.on('join', function(event) {
     console.log(event);
-    insertId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ "added")); 
+    insertId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ " added")); 
 });
 
 bot.on('leave', function(event) {
     console.log(event);
-    removeId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ "removed")); 
+    removeId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ " removed")); 
 
 });
 

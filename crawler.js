@@ -38,7 +38,7 @@ crawler.crawl({
 
             findId(db, (docs)=>{
                 for (i in docs){
-                    console.log('send to ' + docs[i]);
+                    console.log('send to ' + docs[i].id);
                     bot.push(docs[i].id, resultString);
                 }
             });
