@@ -22,6 +22,23 @@ bot.on('message', function(event) {
     }
 });
 
+
+bot.on('follow', function(event) {
+    console.log(event);
+});
+
+bot.on('unfollow', function(event) {
+    console.log(event);
+});
+
+bot.on('join', function(event) {
+    console.log(event);
+});
+
+bot.on('leave', function(event) {
+    console.log(event);
+});
+
 const app = express();
 const linebotParser = bot.parser();
 app.post('/', linebotParser);
