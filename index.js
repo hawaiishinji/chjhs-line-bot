@@ -41,6 +41,7 @@ bot.on('follow', function(event) {
 
 bot.on('unfollow', function(event) {
     console.log(event);
+    insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + "removed")); 
 });
 
 bot.on('join', function(event) {
@@ -50,6 +51,8 @@ bot.on('join', function(event) {
 
 bot.on('leave', function(event) {
     console.log(event);
+    removeId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ "removed")); 
+
 });
 
 var insertId = function (db, id, callback) {
@@ -60,6 +63,25 @@ var insertId = function (db, id, callback) {
   callback(result);
  });
 };
+
+var findId = function (db, callback) {
+    // Get the documents collection
+    var collection = db.collection('subscribe');
+    // Find some documents
+    collection.find({}).toArray(function (err, docs) {
+        callback(docs);
+    });
+}
+
+var removeId = function (db, id, callback){
+    // Get the documents collection
+    var collection = db.collection('subscribe');
+
+    collection.remove({id: id}, function(error, result){
+        callback(); 
+    });
+
+}
 
 const app = express();
 const linebotParser = bot.parser();
