@@ -1,10 +1,21 @@
 var linebot = require('linebot');
 var express = require('express');
+var MongoClient = require('mongodb').MongoClient;
 
 var bot = linebot({
   channelId:  process.env.ChannelId,
   channelSecret:  process.env.ChannelSecret,
   channelAccessToken:  process.env.ChannelAccessToken
+});
+
+var mongoDb;
+var url = 'mongodb://' + process.env.dbUsername + ':'+ process.env.dbPassword + '@ds137281.mlab.com:37281/line-bot';
+console.log(process.env.ChannelId);
+console.log(url);
+MongoClient.connect(url, function (err, db) {
+    console.log("DB Connected correctly to server");
+    mongoDb = db;
+    console.log(err);
 });
 
 
@@ -25,6 +36,7 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
+    insertId(mongoDb, event.source.userId, nil); 
 });
 
 bot.on('unfollow', function(event) {
@@ -33,11 +45,21 @@ bot.on('unfollow', function(event) {
 
 bot.on('join', function(event) {
     console.log(event);
+    insertId(mongoDb, event.source.groupId, nil); 
 });
 
 bot.on('leave', function(event) {
     console.log(event);
 });
+
+var insertId = function (db, id, callback) {
+    var collection = db.collection('subscribe');
+    collection.insert([{id : id }],
+ function (err, result) {
+  console.log("Inserted 2 documents into the userProfile collection\n");
+  callback(result);
+ });
+};
 
 const app = express();
 const linebotParser = bot.parser();
