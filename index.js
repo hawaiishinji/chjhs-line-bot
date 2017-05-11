@@ -16,6 +16,8 @@ MongoClient.connect(url, function (err, db) {
     console.log("DB Connected correctly to server");
     mongoDb = db;
     console.log(err);
+    //insertId(db, '123', ()=>{});
+    removeId(db, '123', ()=>{});
 });
 
 
@@ -41,7 +43,7 @@ bot.on('follow', function(event) {
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + "removed")); 
+    removeId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + "removed")); 
 });
 
 bot.on('join', function(event) {
