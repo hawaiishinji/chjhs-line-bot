@@ -38,14 +38,14 @@ crawler.crawl({
 
             findId(db, (docs)=>{
                 for (i in docs){
-                    console.log(docs[i]);
+                    console.log('send to ' + docs[i]);
+                    bot.push(docs[i].id, resultString);
                 }
             });
         });
 
 
 
-        //bot.push('Uf3cfda1e70a640d8df26fef62e3c6d03', resultString);
     },
     failure: (page) => {
     }
