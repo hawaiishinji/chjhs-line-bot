@@ -36,7 +36,7 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
-    insertId(mongoDb, event.source.userId, nil); 
+    insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + "added")); 
 });
 
 bot.on('unfollow', function(event) {
@@ -45,7 +45,7 @@ bot.on('unfollow', function(event) {
 
 bot.on('join', function(event) {
     console.log(event);
-    insertId(mongoDb, event.source.groupId, nil); 
+    insertId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ "added")); 
 });
 
 bot.on('leave', function(event) {
