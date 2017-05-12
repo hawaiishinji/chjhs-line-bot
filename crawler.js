@@ -13,18 +13,33 @@ var findId = function (db, callback) {
     });
 }
 
+String.prototype.replaceAll = function (find, replace) {
+    var str = this;
+    return str.replace(new RegExp(find, 'g'), replace);
+};
+
 crawler.crawl({
     url: 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID3F',
 
     success: (page) => {
         const html = page.content.toString();
         const $ = Cheerio.load(html);
-        const result = $('div.ecbookdetail li');
-        var resultString = '';
+
+        //get the day string
+        const day = $('div.todayarea');
+        var dayString = $(day[0]).text().replaceAll(' ', '').replaceAll('[\r\n]', ' ').trim();
+        var resultString = dayString + '\n';
+
+
+        const result = $('div.ecbookdetail li,h5');
         for(i=0;i<result.length;i++) {
-            resultString += $(result[i]).text() + '\n';
-            console.log($(result[i]).text());
+            if (result[i].name == 'h5'){
+                resultString += '\n'; 
+            }
+            resultString += $(result[i]).text().replaceAll('[\t]' ,'') + '\n';
         }
+        console.log(resultString);
+
         var bot = linebot({
             channelId:  process.env.ChannelId,
             channelSecret:  process.env.ChannelSecret,
