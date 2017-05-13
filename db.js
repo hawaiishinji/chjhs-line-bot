@@ -1,21 +1,26 @@
 
 
 module.exports = {
-    insertId: function (db, id, callback) {
+    insertId: function (db, id) {
 
-        var collection = db.collection('subscribe');
-        collection.insert([{id : id }],
-            function (err, result) {
-                console.log("Inserted 2 documents into the userProfile collection\n");
-                callback(result);
-            });
+        return new Promise((resolve, reject) => {
+            var collection = db.collection('subscribe');
+            collection.insert([{id : id }],
+                function (err, result) {
+
+                    if (error != null){
+                        reject(error);
+                    }
+
+                    console.log("Inserted 2 documents into the userProfile collection\n");
+                    resolve(result);
+                });
+        });
     }
 
     ,
 
     removeId: function (db, id){
-
-
         return new Promise((resolve, reject) => {
             // Get the documents collection
             var collection = db.collection('subscribe');
@@ -27,9 +32,6 @@ module.exports = {
 
                 resolve(result);
             });
-
-
-
         });
     }
 };

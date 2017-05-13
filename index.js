@@ -14,7 +14,6 @@ var url = 'mongodb://' + process.env.dbUsername + ':'+ process.env.dbPassword + 
 MongoClient.connect(url, function (err, db) {
     console.log("DB Connected correctly to server");
     mongoDb = db;
-    //insertId(db, '123', ()=>{});
     dbTool.removeId(db, '123')
         .then(()=>{});
 });
@@ -36,7 +35,8 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
-    dbTool.insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + " added")); 
+    dbTool.insertId(mongoDb, event.source.userId ) 
+        .then(()=>console.log(event.source.userId + " added"));
 });
 
 bot.on('unfollow', function(event) {
@@ -47,7 +47,8 @@ bot.on('unfollow', function(event) {
 
 bot.on('join', function(event) {
     console.log(event);
-    dbTool.insertId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ " added")); 
+    dbTool.insertId(mongoDb, event.source.groupId)
+        .then(()=>console.log(event.source.groupId+ " added")); 
 });
 
 bot.on('leave', function(event) {
