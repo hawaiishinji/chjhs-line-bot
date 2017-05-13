@@ -41,7 +41,7 @@ bot.on('follow', function(event) {
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    removeId(mongoDb, event.source.userId)
+    dbTool.removeId(mongoDb, event.source.userId)
         .then(() => console.log(event.source.userId + " removed")); 
 });
 
@@ -52,7 +52,7 @@ bot.on('join', function(event) {
 
 bot.on('leave', function(event) {
     console.log(event);
-    removeId(mongoDb, event.source.groupId) 
+    dbTool.removeId(mongoDb, event.source.groupId) 
         .then(() => console.log(event.source.groupId+ " removed")); 
 
 });
