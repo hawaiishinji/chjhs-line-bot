@@ -57,10 +57,10 @@ bot.on('leave', function(event) {
 var insertId = function (db, id, callback) {
     var collection = db.collection('subscribe');
     collection.insert([{id : id }],
- function (err, result) {
-  console.log("Inserted 2 documents into the userProfile collection\n");
-  callback(result);
- });
+        function (err, result) {
+            console.log("Inserted 2 documents into the userProfile collection\n");
+            callback(result);
+        });
 };
 
 
