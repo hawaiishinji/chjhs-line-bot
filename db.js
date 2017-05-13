@@ -8,7 +8,7 @@ module.exports = {
             collection.insert([{id : id }],
                 function (err, result) {
 
-                    if (error != null){
+                    if (err != null){
                         reject(error);
                     }
 
