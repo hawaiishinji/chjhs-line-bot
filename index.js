@@ -1,6 +1,7 @@
 var linebot = require('linebot');
 var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
+var dbTool = require('./db');
 
 var bot = linebot({
   channelId:  process.env.ChannelId,
@@ -14,7 +15,8 @@ MongoClient.connect(url, function (err, db) {
     console.log("DB Connected correctly to server");
     mongoDb = db;
     //insertId(db, '123', ()=>{});
-    removeId(db, '123', ()=>{});
+    dbTool.removeId(db, '123')
+        .then(()=>{});
 });
 
 
@@ -32,48 +34,28 @@ bot.on('message', function(event) {
     }
 });
 
-
 bot.on('follow', function(event) {
     console.log(event);
-    insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + " added")); 
+    dbTool.insertId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + " added")); 
 });
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    removeId(mongoDb, event.source.userId, ()=>console.log(event.source.userId + " removed")); 
+    removeId(mongoDb, event.source.userId)
+        .then(() => console.log(event.source.userId + " removed")); 
 });
 
 bot.on('join', function(event) {
     console.log(event);
-    insertId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ " added")); 
+    dbTool.insertId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ " added")); 
 });
 
 bot.on('leave', function(event) {
     console.log(event);
-    removeId(mongoDb, event.source.groupId, ()=>console.log(event.source.groupId+ " removed")); 
+    removeId(mongoDb, event.source.groupId) 
+        .then(() => console.log(event.source.groupId+ " removed")); 
 
 });
-
-var insertId = function (db, id, callback) {
-    var collection = db.collection('subscribe');
-    collection.insert([{id : id }],
-        function (err, result) {
-            console.log("Inserted 2 documents into the userProfile collection\n");
-            callback(result);
-        });
-};
-
-
-
-var removeId = function (db, id, callback){
-    // Get the documents collection
-    var collection = db.collection('subscribe');
-
-    collection.remove({id: id}, function(error, result){
-        callback(); 
-    });
-
-}
 
 const app = express();
 const linebotParser = bot.parser();
