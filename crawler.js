@@ -84,6 +84,7 @@ crawl(url)
             channelSecret:  process.env.ChannelSecret,
             channelAccessToken:  process.env.ChannelAccessToken
         });
+        console.log(content);
 
         var url = 'mongodb://' + process.env.dbUsername + ':'+ process.env.dbPassword + '@ds137281.mlab.com:37281/line-bot';
         MongoClient.connect(url, function (err, db) {
@@ -99,13 +100,13 @@ crawl(url)
                     // clean old content and insert new day
                     dbTool.cleanContentDb(db); 
 
-                    dbTool.insertContent(db, content.dayString, content.resultString, ()=> console.log('insert content complete'));
+                    dbTool.insertContent(db, content.dayString, content.contentString, ()=> console.log('insert content complete'));
 
                     // send content to each id
                     dbTool.findId(db, (docs)=>{
                         for (i in docs){
                             console.log('send to ' + docs[i].id);
-                            bot.push(docs[i].id, content.resultString);
+                            bot.push(docs[i].id, content.contentString);
                         }
                     });
 
