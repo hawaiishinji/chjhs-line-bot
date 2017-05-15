@@ -18,6 +18,16 @@ MongoClient.connect(url, function (err, db) {
         .then(()=>{});
 });
 
+const checkContentAndReply = (db, event) => {
+    dbTool.findLastestDayString(db, (docs) =>{
+
+        if (docs.length == 1) {
+            event.reply(docs[1].contentString);
+        }
+    });
+
+}
+
 
 bot.on('message', function(event) {
     //console.log(event); //把收到訊息的 event 印出來看看
@@ -37,6 +47,7 @@ bot.on('follow', function(event) {
     console.log(event);
     dbTool.insertId(mongoDb, event.source.userId ) 
         .then(()=>console.log(event.source.userId + " added"));
+    checkContentAndReply(mongoDb, event);
 });
 
 bot.on('unfollow', function(event) {
@@ -49,6 +60,7 @@ bot.on('join', function(event) {
     console.log(event);
     dbTool.insertId(mongoDb, event.source.groupId)
         .then(()=>console.log(event.source.groupId+ " added")); 
+    checkContentAndReply(mongoDb, event);
 });
 
 bot.on('leave', function(event) {
