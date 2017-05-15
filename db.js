@@ -34,6 +34,41 @@ module.exports = {
             });
         });
     }
+
+    ,
+    findId : function (db, callback) {
+        // Get the documents collection
+        var collection = db.collection('subscribe');
+        // Find some documents
+        collection.find({}).toArray(function (err, docs) {
+            callback(docs);
+        });
+    }
+    ,
+    insertContent : function(db, dayString, contentString, callback){
+        // Get the documents collection
+        var collection = db.collection('content');
+
+        collection.insert({dayString: dayString, contentString: contentString}, callback);
+    }
+    ,
+    cleanContentDb : function (db){
+        // Get the documents collection
+        var collection = db.collection('content');
+        collection.remove();
+    }
+    ,
+    findLastestDayString : function (db, callback) {
+        // Get the documents collection
+        var collection = db.collection('content');
+        // Find some documents
+        collection.find({}).toArray(function (err, docs) {
+            callback(docs);
+        });
+    }
+
+
+
 };
 
 
