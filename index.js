@@ -22,7 +22,7 @@ const checkContentAndReply = (db, event) => {
     dbTool.findLastestDayString(db, (docs) =>{
 
         if (docs.length == 1) {
-            event.reply(docs[1].contentString);
+            event.reply(docs[0].contentString);
         }
     });
 
