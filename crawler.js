@@ -1,4 +1,5 @@
 var Crawler = require('js-crawler');
+var he = require('he');
 var Cheerio = require('cheerio');
 var linebot = require('linebot');
 var dbTool = require('./db');
@@ -21,7 +22,7 @@ const crawl = (url) =>{
 };
 
 const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B';
-//const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID3F&date=20170511';
+//const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B&date=20170731';
 
 const getSelector = (page) => {
     return new Promise((resolve, reject) => {
@@ -50,17 +51,27 @@ const getContent = (selector) => {
         var resultString = '';
 
         //get the day string
-        const day = selector('div.todayarea');
-        var dayString = selector(day[0]).text().replaceAll(' ', '').replaceAll('[\r\n]', ' ').trim();
+        const mon = selector('div.todayarea .mm');
+        const day = selector('div.todayarea .dd');
+        var dayString = selector(mon[0]).text() + ' ' +  selector(day[0]).text();
         resultString = dayString + '\n';
 
         const result = selector('div.ecbookdetail li,h5');
         for(i=0;i<result.length;i++) {
             console.log(result[i].name);
+            //insert change line before header
             if (result[i].name == 'h5'){
                 resultString += '\n'; 
             }
-            resultString += selector(result[i]).text().replaceAll('[\t]' ,'') + '\n';
+            selector('i').remove();
+            //resultString += selector(result[i]).text().replaceAll('[\t]' ,'') + '\n';
+            
+            //convert <br> to change line
+            resultString += he.decode(selector(result[i]).html()).replaceAll('<br>' ,'\n\n') + '\n';
+            //insert change line after header
+            if (result[i].name == 'h5'){
+                resultString += '\n'; 
+            }
         }
         console.log(resultString);
 
