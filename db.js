@@ -14,42 +14,35 @@ const db = firebase.database();
 
 module.exports = {
 
-  className : 'ECELE1B',
-
-  insertId: function (id) {
-    db.ref(`${this.className}/ids/${id}`).set(true);
+  insertId: function (classId, id) {
+    db.ref(`${classId}/ids/${id}`).set(true);
   }
 
   ,
 
-  setClassName: function(className){
-    this.className = className;
-  }
-  ,
-
-  removeId: function (id){
-    db.ref(`ECELE1B/ids/${id}`).remove();
+  removeId: function (classId, id){
+    db.ref(`${classId}/ids/${id}`).remove();
   }
 
   ,
-  findId : function () {
+  findId : function (classId) {
     // Get the documents collection
-    return db.ref(`ECELE1B/ids`).once('value').then((snapshot)=>{
+    return db.ref(`${classId}/ids`).once('value').then((snapshot)=>{
       return Object.keys(snapshot.val());
     });
   }
   ,
-  insertContent : function(dayString, contentString){
-    db.ref(`ECELE1B/content`).set({dayString: dayString, contentString: contentString});
+  insertContent : function(classId, dayString, contentString){
+    db.ref(`$${classId}/content`).set({dayString: dayString, contentString: contentString});
   }
   ,
-  cleanContentDb : function (){
+  cleanContentDb : function (classId){
     // Get the documents collection
-    db.ref(`ECELE1B/content`).remove();
+    db.ref(`${classId}/content`).remove();
   }
   ,
-  findLastestContent: function () {
-    return db.ref(`ECELE1B/content`).once('value').then((snapshot)=>{
+  findLastestContent: function (classId) {
+    return db.ref(`${classId}/content`).once('value').then((snapshot)=>{
       return snapshot.val();
     });
   }

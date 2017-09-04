@@ -21,6 +21,7 @@ const crawl = (url) =>{
 };
 
 const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B';
+const url2 = 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDEFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID1C';
 //const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B&date=20170731';
 
 const getSelector = (page) => {
@@ -78,6 +79,7 @@ const getContent = (selector) => {
     });
 };
 
+function crawlTheUrl(url, classId){
 crawl(url)
     .then((page) => {
         return getSelector(page);
@@ -97,7 +99,7 @@ crawl(url)
         console.log(content);
 
 
-            dbTool.findLastestContent().then((contentObject) =>{
+            dbTool.findLastestContent(classId).then((contentObject) =>{
 
                 if ((contentObject) && (contentObject.dayString == content.dayString)){
                     console.log('this content already exist in db'); 
@@ -105,12 +107,12 @@ crawl(url)
                 else if ((!contentObject) || (contentObject.dayString != content.dayString)){
 
                     // clean old content and insert new day
-                    dbTool.cleanContentDb(); 
+                    dbTool.cleanContentDb(classId); 
 
-                    dbTool.insertContent(content.dayString, content.contentString);
+                    dbTool.insertContent(classId, content.dayString, content.contentString);
 
                     // send content to each id
-                    dbTool.findId().then((ids)=>{
+                    dbTool.findId(classId).then((ids)=>{
                         console.log(ids);
                         for (i in ids){
                             console.log('send to ' + ids[i]);
@@ -126,4 +128,7 @@ crawl(url)
 
     })
     .catch((err) => console.log(err.message));
+}
 
+crawlTheUrl(url, 'ECELE1B');
+crawlTheUrl(url2, 'ECKID1C');
