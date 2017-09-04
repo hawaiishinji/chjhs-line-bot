@@ -11,7 +11,7 @@ var bot = linebot({
 const checkContentAndReply = (event) => {
     dbTool.findLastestContent().then((content) =>{
       if (content.contentString){
-        event.replay(content.contentString);
+        event.reply(content.contentString);
       }
     });
 
