@@ -111,6 +111,7 @@ crawl(url)
 
                     // send content to each id
                     dbTool.findId().then((ids)=>{
+                        console.log(ids);
                         for (i in ids){
                             console.log('send to ' + ids[i]);
                             bot.push(ids[i], content.contentString);

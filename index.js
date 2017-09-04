@@ -34,28 +34,24 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
-    dbTool.insertId(event.source.userId ) 
-        .then(()=>console.log(event.source.userId + " added"));
+    dbTool.insertId(event.source.userId);
     checkContentAndReply(event);
 });
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    dbTool.removeId(event.source.userId)
-        .then(() => console.log(event.source.userId + " removed")); 
+    dbTool.removeId(event.source.userId);
 });
 
 bot.on('join', function(event) {
     console.log(event);
-    dbTool.insertId(event.source.groupId)
-        .then(()=>console.log(event.source.groupId+ " added")); 
+    dbTool.insertId(event.source.groupId);
     checkContentAndReply(event);
 });
 
 bot.on('leave', function(event) {
     console.log(event);
-    dbTool.removeId(event.source.groupId) 
-        .then(() => console.log(event.source.groupId+ " removed")); 
+    dbTool.removeId(event.source.groupId);
 
 });
 

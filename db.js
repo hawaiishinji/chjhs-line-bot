@@ -35,7 +35,7 @@ module.exports = {
   findId : function () {
     // Get the documents collection
     return db.ref(`ECELE1B/ids`).once('value').then((snapshot)=>{
-      return snapshot.val().keys;
+      return Object.keys(snapshot.val());
     });
   }
   ,
