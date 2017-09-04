@@ -4,7 +4,6 @@ var Cheerio = require('cheerio');
 var linebot = require('linebot');
 var dbTool = require('./db');
 var crawler = new Crawler().configure({ignoreRelative: false, depth: 1});
-var MongoClient = require('mongodb').MongoClient;
 
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
@@ -97,27 +96,24 @@ crawl(url)
         });
         console.log(content);
 
-        var url = 'mongodb://' + process.env.dbUsername + ':'+ process.env.dbPassword + '@ds137281.mlab.com:37281/line-bot';
-        MongoClient.connect(url, function (err, db) {
-            console.log("DB Connected correctly to server");
 
-            dbTool.findLastestDayString(db, (docs) =>{
+            dbTool.findLastestContent().then((contentObject) =>{
 
-                if ((docs.length == 1) && (docs[0].dayString == content.dayString)){
+                if ((contentObject) && (contentObject.dayString == content.dayString)){
                     console.log('this content already exist in db'); 
                 }
-                else if ((docs.length == 0) || (docs[0].dayString != content.dayString)){
+                else if ((!contentObject) || (contentObject.dayString != content.dayString)){
 
                     // clean old content and insert new day
-                    dbTool.cleanContentDb(db); 
+                    dbTool.cleanContentDb(); 
 
-                    dbTool.insertContent(db, content.dayString, content.contentString, ()=> console.log('insert content complete'));
+                    dbTool.insertContent(content.dayString, content.contentString);
 
                     // send content to each id
-                    dbTool.findId(db, (docs)=>{
-                        for (i in docs){
-                            console.log('send to ' + docs[i].id);
-                            bot.push(docs[i].id, content.contentString);
+                    dbTool.findId().then((ids)=>{
+                        for (i in ids){
+                            console.log('send to ' + ids[i]);
+                            bot.push(ids[i], content.contentString);
                         }
                     });
 
@@ -126,7 +122,6 @@ crawl(url)
 
             });
 
-        });
 
     })
     .catch((err) => console.log(err.message));

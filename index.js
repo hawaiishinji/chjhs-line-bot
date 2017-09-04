@@ -1,6 +1,5 @@
 var linebot = require('linebot');
 var express = require('express');
-var MongoClient = require('mongodb').MongoClient;
 var dbTool = require('./db');
 
 var bot = linebot({
@@ -9,21 +8,11 @@ var bot = linebot({
   channelAccessToken:  process.env.ChannelAccessToken
 });
 
-var mongoDb;
-var url = 'mongodb://' + process.env.dbUsername + ':'+ process.env.dbPassword + '@ds137281.mlab.com:37281/line-bot';
-MongoClient.connect(url, function (err, db) {
-    console.log("DB Connected correctly to server");
-    mongoDb = db;
-    dbTool.removeId(db, '123')
-        .then(()=>{});
-});
-
-const checkContentAndReply = (db, event) => {
-    dbTool.findLastestDayString(db, (docs) =>{
-
-        if (docs.length == 1) {
-            event.reply(docs[0].contentString);
-        }
+const checkContentAndReply = (event) => {
+    dbTool.findLastestContent().then((content) =>{
+      if (content.contentString){
+        event.replay(content.contentString);
+      }
     });
 
 }
@@ -45,27 +34,27 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
-    dbTool.insertId(mongoDb, event.source.userId ) 
+    dbTool.insertId(event.source.userId ) 
         .then(()=>console.log(event.source.userId + " added"));
-    checkContentAndReply(mongoDb, event);
+    checkContentAndReply(event);
 });
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    dbTool.removeId(mongoDb, event.source.userId)
+    dbTool.removeId(event.source.userId)
         .then(() => console.log(event.source.userId + " removed")); 
 });
 
 bot.on('join', function(event) {
     console.log(event);
-    dbTool.insertId(mongoDb, event.source.groupId)
+    dbTool.insertId(event.source.groupId)
         .then(()=>console.log(event.source.groupId+ " added")); 
-    checkContentAndReply(mongoDb, event);
+    checkContentAndReply(event);
 });
 
 bot.on('leave', function(event) {
     console.log(event);
-    dbTool.removeId(mongoDb, event.source.groupId) 
+    dbTool.removeId(event.source.groupId) 
         .then(() => console.log(event.source.groupId+ " removed")); 
 
 });

@@ -1,74 +1,60 @@
+var firebase = require('firebase');
 
+var config = {
+  apiKey: process.env.FirebaseApiKey,
+  authDomain: process.env.FirebaseAuthDomain,
+  databaseURL: process.env.FirebaseDatabaseURL,
+  projectId: process.env.FirebaseProjectId,
+  storageBucket: process.env.FirebaseStorageBucket,
+  messagingSenderId: process.env.FirebaseMessagingSenderId
+};
+
+firebase.initializeApp(config);
+const db = firebase.database();
 
 module.exports = {
-    insertId: function (db, id) {
 
-        return new Promise((resolve, reject) => {
-            var collection = db.collection('subscribe');
-            collection.insert([{id : id }],
-                function (err, result) {
+  className : 'ECELE1B',
 
-                    if (err != null){
-                        reject(error);
-                    }
+  insertId: function (id) {
+    db.ref(`${this.className}/ids/${id}`).set(true);
+  }
 
-                    console.log("Inserted 2 documents into the userProfile collection\n");
-                    resolve(result);
-                });
-        });
-    }
+  ,
 
-    ,
+  setClassName: function(className){
+    this.className = className;
+  }
+  ,
 
-    removeId: function (db, id){
-        return new Promise((resolve, reject) => {
-            // Get the documents collection
-            var collection = db.collection('subscribe');
+  removeId: function (id){
+    db.ref(`ECELE1B/ids/${id}`).remove();
+  }
 
-            collection.remove({id: id}, function(error, result){
-                if (error != null){
-                    reject(error);
-                }
-
-                resolve(result);
-            });
-        });
-    }
-
-    ,
-    findId : function (db, callback) {
-        // Get the documents collection
-        var collection = db.collection('subscribe');
-        // Find some documents
-        collection.find({}).toArray(function (err, docs) {
-            callback(docs);
-        });
-    }
-    ,
-    insertContent : function(db, dayString, contentString, callback){
-        // Get the documents collection
-        var collection = db.collection('content');
-
-        collection.insert({dayString: dayString, contentString: contentString}, callback);
-    }
-    ,
-    cleanContentDb : function (db){
-        // Get the documents collection
-        var collection = db.collection('content');
-        collection.remove();
-    }
-    ,
-    findLastestDayString : function (db, callback) {
-        // Get the documents collection
-        var collection = db.collection('content');
-        // Find some documents
-        collection.find({}).toArray(function (err, docs) {
-            callback(docs);
-        });
-    }
+  ,
+  findId : function () {
+    // Get the documents collection
+    return db.ref(`ECELE1B/ids`).once('value').then((snapshot)=>{
+      return snapshot.val().keys;
+    });
+  }
+  ,
+  insertContent : function(dayString, contentString){
+    db.ref(`ECELE1B/content`).set({dayString: dayString, contentString: contentString});
+  }
+  ,
+  cleanContentDb : function (){
+    // Get the documents collection
+    db.ref(`ECELE1B/content`).remove();
+  }
+  ,
+  findLastestContent: function () {
+    return db.ref(`ECELE1B/content`).once('value').then((snapshot)=>{
+      return snapshot.val();
+    });
+  }
 
 
 
 };
-
 
