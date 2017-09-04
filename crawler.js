@@ -21,7 +21,7 @@ const crawl = (url) =>{
 };
 
 const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B';
-const url2 = 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDEFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID1C';
+const url2 = 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID1C';
 //const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B&date=20170731';
 
 const getSelector = (page) => {
@@ -80,7 +80,7 @@ const getContent = (selector) => {
 };
 
 function crawlTheUrl(url, classId){
-crawl(url)
+    return crawl(url)
     .then((page) => {
         return getSelector(page);
     })
@@ -130,5 +130,6 @@ crawl(url)
     .catch((err) => console.log(err.message));
 }
 
-crawlTheUrl(url, 'ECELE1B');
-crawlTheUrl(url2, 'ECKID1C');
+crawlTheUrl(url, 'ECELE1B').then(() =>{
+  crawlTheUrl(url2, 'ECKID1C');
+});
