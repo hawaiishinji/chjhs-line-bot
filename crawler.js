@@ -79,7 +79,7 @@ const getContent = (selector) => {
     });
 };
 
-function crawlTheUrl(url, classId){
+function crawlTheUrl(url, classId, bot){
     return crawl(url)
     .then((page) => {
         return getSelector(page);
@@ -91,11 +91,7 @@ function crawlTheUrl(url, classId){
         return getContent(selector);
     })
     .then((content) => {
-        var bot = linebot({
-            channelId:  process.env.ChannelId,
-            channelSecret:  process.env.ChannelSecret,
-            channelAccessToken:  process.env.ChannelAccessToken
-        });
+        
         console.log(content);
 
 
@@ -130,6 +126,21 @@ function crawlTheUrl(url, classId){
     .catch((err) => console.log(err.message));
 }
 
-crawlTheUrl(url, 'ECELE1B').then(() =>{
-  crawlTheUrl(url2, 'ECKID1C');
+var bot1 = linebot({
+            channelId:  process.env.ChannelId,
+            channelSecret:  process.env.ChannelSecret,
+            channelAccessToken:  process.env.ChannelAccessToken
+        });
+
+var bot2 = linebot({
+            channelId:  process.env.ChannelId2,
+            channelSecret:  process.env.ChannelSecret2,
+            channelAccessToken:  process.env.ChannelAccessToken2
+        });
+
+
+
+
+crawlTheUrl(url, 'ECELE1B', bot1).then(() =>{
+  crawlTheUrl(url2, 'ECKID1C', bot2);
 });
