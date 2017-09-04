@@ -33,7 +33,7 @@ module.exports = {
   }
   ,
   insertContent : function(classId, dayString, contentString){
-    db.ref(`$${classId}/content`).set({dayString: dayString, contentString: contentString});
+    db.ref(`${classId}/content`).set({dayString: dayString, contentString: contentString});
   }
   ,
   cleanContentDb : function (classId){
