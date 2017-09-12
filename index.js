@@ -11,10 +11,13 @@ var bot1 = linebot({
 
 const initialMessage = '目前僅支援鸚鵡班與一年孝班';
 
-const checkContentAndReply = (event, classId) => {
+const checkContentAndReply = (event, classId, className) => {
     dbTool.findLastestContent(classId).then((content) =>{
       if (content.contentString){
         event.reply(content.contentString);
+      }
+      else{
+        event.reply('已關注' + className);
       }
     });
 
@@ -24,6 +27,7 @@ function registerCallback(bot, classId){
 
 bot.on('message', function(event) {
     //console.log(event); //把收到訊息的 event 印出來看看
+    var targetId = event.source.groupId? event.source.groupId : event.source.userId; 
     if (event.message.type = 'text') {
         var msg = event.message.text;
         console.log('message ' + msg);
@@ -32,46 +36,27 @@ bot.on('message', function(event) {
 
           for (var i in classes){
             if (msg.includes(classes[i].name)){
-              dbTool.insertId(classes[i].id, event.source.userId);
-              event.reply('已關注' + classes[i].name);
-              checkContentAndReply(event, classes[i].id);
+              dbTool.insertId(classes[i].id, targetId);
+              checkContentAndReply(event, classes[i].id, classes[i].name);
               hit = true;
             }
           }
-
           if (!hit){
             event.reply('要關注哪一班?');
           }
-/*
-          if (msg.includes('一年孝班')){
-            dbTool.insertId('ECELE1B', event.source.userId);
-            event.reply('已關注一年孝班');
-            checkContentAndReply(event, 'ECELE1B');
-          }
-          else if (msg.includes('鸚鵡班')){
-            dbTool.insertId('ECKID1C', event.source.userId);
-            event.reply('已關注鸚鵡班');
-            checkContentAndReply(event, 'ECKID1C');
-          }
-          else{
-            event.reply('要關注哪一班?');
-          }*/
-
         }
-
         else if (msg.includes('退訂')){
-          if (msg.includes('一年孝班')){
-            dbTool.removeId('ECELE1B', event.source.userId);
-            event.reply('已退訂一年孝班');
+
+          for (var i in classes){
+            if (msg.includes(classes[i].name)){
+              dbTool.removeId(classes[i].id, targetId);
+              event.reply('已退訂' + classes[i].name);
+              hit = true;
+            }
           }
-          else if (msg.includes('鸚鵡班')){
-            dbTool.removeId('ECKID1C', event.source.userId);
-            event.reply('已退訂鸚鵡班');
-          }
-          else{
+          if (!hit){
             event.reply('要退訂哪一班?');
           }
-
         }
         else{
           event.reply(msg);
