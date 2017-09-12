@@ -14,6 +14,8 @@ var bot2 = linebot({
   channelAccessToken:  process.env.ChannelAccessToken2
 });
 
+const initialMessage = '目前僅支援鸚鵡班與一年孝班';
+
 const checkContentAndReply = (event, classId) => {
     dbTool.findLastestContent(classId).then((content) =>{
       if (content.contentString){
@@ -30,6 +32,13 @@ bot.on('message', function(event) {
     if (event.message.type = 'text') {
         var msg = event.message.text;
         console.log('message ' + msg);
+
+        if (msg.includes('關注')){
+          event.reply('要關注哪一班?');
+        }
+        else{
+          event.reply(msg);
+        }
         /*    event.reply(msg).then(function(data) {
             // success
             console.log(msg);
@@ -42,24 +51,25 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
-    dbTool.insertId(classId, event.source.userId);
-    checkContentAndReply(event, classId);
+    //dbTool.insertId(classId, event.source.userId);
+    //checkContentAndReply(event, classId);
+    event.reply(content.contentString);
 });
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    dbTool.removeId(classId, event.source.userId);
+    //dbTool.removeIdFromAllClass(event.source.groupId);
 });
 
 bot.on('join', function(event) {
     console.log(event);
-    dbTool.insertId(classId, event.source.groupId);
-    checkContentAndReply(event, classId);
+    //dbTool.insertId(classId, event.source.groupId);
+    //checkContentAndReply(event, classId);
 });
 
 bot.on('leave', function(event) {
     console.log(event);
-    dbTool.removeId(classId, event.source.groupId);
+    //dbTool.removeIdFromAllClass(event.source.groupId);
 
 });
 
