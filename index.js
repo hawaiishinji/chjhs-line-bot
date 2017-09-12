@@ -31,15 +31,32 @@ bot.on('message', function(event) {
 
           if (msg.includes('一年孝班')){
             dbTool.insertId('ECELE1B', event.source.userId);
+            event.reply('已關注一年孝班');
             checkContentAndReply(event, 'ECELE1B');
           }
           else if (msg.includes('鸚鵡班')){
             dbTool.insertId('ECKID1C', event.source.userId);
+            event.reply('已關注鸚鵡班');
             checkContentAndReply(event, 'ECKID1C');
           }
           else{
             event.reply('要關注哪一班?');
           }
+        }
+
+        else if (msg.includes('退訂')){
+          if (msg.includes('一年孝班')){
+            dbTool.removeId('ECELE1B', event.source.userId);
+            event.reply('已退訂一年孝班');
+          }
+          else if (msg.includes('鸚鵡班')){
+            dbTool.removeId('ECKID1C', event.source.userId);
+            event.reply('已退訂鸚鵡班');
+          }
+          else{
+            event.reply('要退訂哪一班?');
+          }
+
         }
         else{
           event.reply(msg);
