@@ -9,7 +9,10 @@ var bot1 = linebot({
   channelAccessToken:  process.env.ChannelAccessToken
 });
 
-const initialMessage = '目前僅支援鸚鵡班與一年孝班\n請問你要關注哪一班';
+const initialMessage = '目前僅支援鸚鵡班與一年孝班\n'
+                        +'請問你要關注哪一班\n'
+                        +'請用"小幫手我要關注" 或 "小幫手我要退訂" 加上班級名稱來關注或退訂聯絡簿'
+                        ;
 
 const checkContentAndReply = (event, classId, className) => {
     dbTool.findLastestContent(classId).then((content) =>{
@@ -32,30 +35,32 @@ bot.on('message', function(event) {
         var msg = event.message.text;
         console.log('message ' + msg);
         var hit = false;
-        if (msg.includes('關注')){
+        if (msg.includes('小幫手我要')){
+          if (msg.includes('關注')){
 
-          for (var i in classes){
-            if (msg.includes(classes[i].name)){
-              dbTool.insertId(classes[i].id, targetId);
-              checkContentAndReply(event, classes[i].id, classes[i].name);
-              hit = true;
+            for (var i in classes){
+              if (msg.includes(classes[i].name)){
+                dbTool.insertId(classes[i].id, targetId);
+                checkContentAndReply(event, classes[i].id, classes[i].name);
+                hit = true;
+              }
+            }
+            if (!hit){
+              event.reply('要關注哪一班?');
             }
           }
-          if (!hit){
-            event.reply('要關注哪一班?');
-          }
-        }
-        else if (msg.includes('退訂')){
+          else if (msg.includes('退訂')){
 
-          for (var i in classes){
-            if (msg.includes(classes[i].name)){
-              dbTool.removeId(classes[i].id, targetId);
-              event.reply('已退訂' + classes[i].name);
-              hit = true;
+            for (var i in classes){
+              if (msg.includes(classes[i].name)){
+                dbTool.removeId(classes[i].id, targetId);
+                event.reply('已退訂' + classes[i].name);
+                hit = true;
+              }
             }
-          }
-          if (!hit){
-            event.reply('要退訂哪一班?');
+            if (!hit){
+              event.reply('要退訂哪一班?');
+            }
           }
         }
     }
