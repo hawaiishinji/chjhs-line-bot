@@ -8,12 +8,6 @@ var bot1 = linebot({
   channelAccessToken:  process.env.ChannelAccessToken
 });
 
-var bot2 = linebot({
-  channelId:  process.env.ChannelId2,
-  channelSecret:  process.env.ChannelSecret2,
-  channelAccessToken:  process.env.ChannelAccessToken2
-});
-
 const initialMessage = '目前僅支援鸚鵡班與一年孝班';
 
 const checkContentAndReply = (event, classId) => {
@@ -34,18 +28,22 @@ bot.on('message', function(event) {
         console.log('message ' + msg);
 
         if (msg.includes('關注')){
-          event.reply('要關注哪一班?');
+
+          if (msg.includes('一年孝班')){
+            dbTool.insertId('ECELE1B', event.source.userId);
+            checkContentAndReply(event, 'ECELE1B');
+          }
+          else if (msg.includes('鸚鵡班')){
+            dbTool.insertId('ECKID1C', event.source.userId);
+            checkContentAndReply(event, 'ECKID1C');
+          }
+          else{
+            event.reply('要關注哪一班?');
+          }
         }
         else{
           event.reply(msg);
         }
-        /*    event.reply(msg).then(function(data) {
-            // success
-            console.log(msg);
-        }).catch(function(error) {
-            // error
-            console.log('error');
-        });*/
     }
 });
 
@@ -76,13 +74,10 @@ bot.on('leave', function(event) {
 }
 
 registerCallback(bot1, 'ECELE1B');
-registerCallback(bot2, 'ECKID1C');
 
 const app = express();
 const linebotParser1 = bot1.parser();
-const linebotParser2 = bot2.parser();
 app.post('/ECELE1B', linebotParser1);
-app.post('/ECKID1C', linebotParser2);
 
 //因為 express 預設走 port 3000，而 heroku 上預設卻不是，要透過下列程式轉換
 var server = app.listen(process.env.PORT || 8080, function() {
