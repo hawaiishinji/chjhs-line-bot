@@ -4,6 +4,7 @@ var Cheerio = require('cheerio');
 var linebot = require('linebot');
 var dbTool = require('./db');
 var crawler = new Crawler().configure({ignoreRelative: false, depth: 1});
+var classes = require('./classes');
 
 String.prototype.replaceAll = function (find, replace) {
     var str = this;
@@ -20,9 +21,6 @@ const crawl = (url) =>{
     });
 };
 
-const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B';
-const url2 = 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID1C';
-//const url = 'http://www.chjhs.tp.edu.tw/dispPageBox/ELEFULL.aspx?ddsPageID=ELEECONTACT&&classid=ECELE1B&date=20170731';
 
 const getSelector = (page) => {
     return new Promise((resolve, reject) => {
@@ -46,7 +44,7 @@ const checkHasContent = (selector) => {
 
 };
 
-const getContent = (selector) => {
+const getContent = (selector, className) => {
     return new Promise((resolve, reject) =>{
         var resultString = '';
 
@@ -54,7 +52,7 @@ const getContent = (selector) => {
         const mon = selector('div.todayarea .mm');
         const day = selector('div.todayarea .dd');
         var dayString = selector(mon[0]).text() + ' ' +  selector(day[0]).text();
-        resultString = dayString + '\n';
+        resultString = className + ' ' + dayString + '\n';
 
         const result = selector('div.ecbookdetail li,h5');
         for(i=0;i<result.length;i++) {
@@ -79,7 +77,7 @@ const getContent = (selector) => {
     });
 };
 
-function crawlTheUrl(url, classId, bot){
+function crawlTheUrl(url, classId, className, bot){
     return crawl(url)
     .then((page) => {
         return getSelector(page);
@@ -88,7 +86,7 @@ function crawlTheUrl(url, classId, bot){
         return checkHasContent(selector);
     })
     .then((selector) => {
-        return getContent(selector);
+        return getContent(selector, className);
     })
     .then((content) => {
         
@@ -101,7 +99,7 @@ function crawlTheUrl(url, classId, bot){
                     console.log('this content already exist in db'); 
                 }
                 else if ((!contentObject) || (contentObject.dayString != content.dayString)){
-
+                    
                     // clean old content and insert new day
                     dbTool.cleanContentDb(classId); 
 
@@ -126,21 +124,13 @@ function crawlTheUrl(url, classId, bot){
     .catch((err) => console.log(err.message));
 }
 
-var bot1 = linebot({
+var bot = linebot({
             channelId:  process.env.ChannelId,
             channelSecret:  process.env.ChannelSecret,
             channelAccessToken:  process.env.ChannelAccessToken
         });
 
-var bot2 = linebot({
-            channelId:  process.env.ChannelId2,
-            channelSecret:  process.env.ChannelSecret2,
-            channelAccessToken:  process.env.ChannelAccessToken2
-        });
 
-
-
-
-crawlTheUrl(url, 'ECELE1B', bot1).then(() =>{
-  crawlTheUrl(url2, 'ECKID1C', bot2);
+crawlTheUrl(classes[0].url, classes[0].id, classes[0].name, bot).then(() =>{
+  crawlTheUrl(classes[1].url, classes[1].id, classes[1].name, bot);
 });
