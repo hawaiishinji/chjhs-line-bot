@@ -1,6 +1,7 @@
 var linebot = require('linebot');
 var express = require('express');
 var dbTool = require('./db');
+var classes = require('./classes');
 
 var bot1 = linebot({
   channelId:  process.env.ChannelId,
@@ -26,9 +27,22 @@ bot.on('message', function(event) {
     if (event.message.type = 'text') {
         var msg = event.message.text;
         console.log('message ' + msg);
-
+        var hit = false;
         if (msg.includes('關注')){
 
+          for (var i in classes){
+            if (msg.includes(classes[i].name)){
+              dbTool.insertId(classes[i].id, event.source.userId);
+              event.reply('已關注' + classes[i].name);
+              checkContentAndReply(event, classes[i].id);
+              hit = true;
+            }
+          }
+
+          if (!hit){
+            event.reply('要關注哪一班?');
+          }
+/*
           if (msg.includes('一年孝班')){
             dbTool.insertId('ECELE1B', event.source.userId);
             event.reply('已關注一年孝班');
@@ -41,7 +55,8 @@ bot.on('message', function(event) {
           }
           else{
             event.reply('要關注哪一班?');
-          }
+          }*/
+
         }
 
         else if (msg.includes('退訂')){
