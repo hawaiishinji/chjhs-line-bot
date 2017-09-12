@@ -16,7 +16,7 @@ const initialMessage = '目前僅支援鸚鵡班與一年孝班\n'
 
 const checkContentAndReply = (event, classId, className) => {
     dbTool.findLastestContent(classId).then((content) =>{
-      if (content.contentString){
+      if (content){
         event.reply(content.contentString);
       }
       else{
