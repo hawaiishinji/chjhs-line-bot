@@ -70,7 +70,7 @@ bot.on('follow', function(event) {
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    //dbTool.removeIdFromAllClass(event.source.groupId);
+    dbTool.removeIdFromAllClass(event.source.groupId);
 });
 
 bot.on('join', function(event) {
@@ -82,7 +82,7 @@ bot.on('join', function(event) {
 
 bot.on('leave', function(event) {
     console.log(event);
-    //dbTool.removeIdFromAllClass(event.source.groupId);
+    dbTool.removeIdFromAllClass(event.source.groupId);
 
 });
 

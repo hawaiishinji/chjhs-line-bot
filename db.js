@@ -46,7 +46,15 @@ module.exports = {
       return snapshot.val();
     });
   }
-
+  ,
+  removeIdFromAllClass: function(id){
+    db.ref().once('value').then((snapshots)=>{
+      snapshots.forEach((snapshot) => {
+        const classId = snapshot.key;
+        db.ref(`${classId}/ids/${id}`).remove();
+      }); 
+    });
+  }
 
 
 };
