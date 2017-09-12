@@ -58,9 +58,6 @@ bot.on('message', function(event) {
             event.reply('要退訂哪一班?');
           }
         }
-        else{
-          event.reply(msg);
-        }
     }
 });
 
