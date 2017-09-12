@@ -75,7 +75,7 @@ bot.on('follow', function(event) {
 
 bot.on('unfollow', function(event) {
     console.log(event);
-    dbTool.removeIdFromAllClass(event.source.groupId);
+    dbTool.removeIdFromAllClass(event.source.userId);
 });
 
 bot.on('join', function(event) {
