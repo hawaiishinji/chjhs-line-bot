@@ -68,7 +68,6 @@ bot.on('follow', function(event) {
     console.log(event);
     //dbTool.insertId(classId, event.source.userId);
     //checkContentAndReply(event, classId);
-    event.reply(content.contentString);
 });
 
 bot.on('unfollow', function(event) {
