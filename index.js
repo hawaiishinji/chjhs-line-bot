@@ -9,7 +9,7 @@ var bot1 = linebot({
   channelAccessToken:  process.env.ChannelAccessToken
 });
 
-const initialMessage = '目前僅支援鸚鵡班與一年孝班';
+const initialMessage = '目前僅支援鸚鵡班與一年孝班\n請問你要關注哪一班';
 
 const checkContentAndReply = (event, classId, className) => {
     dbTool.findLastestContent(classId).then((content) =>{
@@ -63,6 +63,7 @@ bot.on('message', function(event) {
 
 bot.on('follow', function(event) {
     console.log(event);
+    event.reply(initialMessage);
     //dbTool.insertId(classId, event.source.userId);
     //checkContentAndReply(event, classId);
 });
@@ -74,6 +75,7 @@ bot.on('unfollow', function(event) {
 
 bot.on('join', function(event) {
     console.log(event);
+    event.reply(initialMessage);
     //dbTool.insertId(classId, event.source.groupId);
     //checkContentAndReply(event, classId);
 });
