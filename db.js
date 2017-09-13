@@ -8,12 +8,14 @@ var config = {
   storageBucket: process.env.FirebaseStorageBucket,
   messagingSenderId: process.env.FirebaseMessagingSenderId
 };
-
-firebase.initializeApp(config);
+const app = firebase.initializeApp(config);
 const db = firebase.database();
 
 module.exports = {
-
+  endDb: function (){
+    app.delete();
+  }
+  ,
   insertId: function (classId, id) {
     db.ref(`${classId}/ids/${id}`).set(true);
   }

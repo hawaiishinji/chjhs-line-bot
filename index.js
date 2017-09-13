@@ -35,7 +35,7 @@ bot.on('message', function(event) {
         var msg = event.message.text;
         console.log('message ' + msg);
         var hit = false;
-        if (msg.includes('小幫手我要')){
+        if (msg && msg.includes('小幫手我要')){
           if (msg.includes('關注')){
 
             for (var i in classes){
