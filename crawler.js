@@ -59,16 +59,16 @@ const getContent = (selector, className) => {
             console.log(result[i].name);
             //insert change line before header
             if (result[i].name == 'h5'){
-                resultString += '\n'; 
+                resultString += '\n';
             }
             selector('i').remove();
             //resultString += selector(result[i]).text().replaceAll('[\t]' ,'') + '\n';
-            
+
             //convert <br> to change line
             resultString += he.decode(selector(result[i]).html()).replaceAll('<br>' ,'\n\n') + '\n';
             //insert change line after header
             if (result[i].name == 'h5'){
-                resultString += '\n'; 
+                resultString += '\n';
             }
         }
         console.log(resultString);
@@ -89,29 +89,26 @@ function crawlTheUrl(url, classId, className, bot){
         return getContent(selector, className);
     })
     .then((content) => {
-        
+
         console.log(content);
 
 
             dbTool.findLastestContent(classId).then((contentObject) =>{
 
                 if ((contentObject) && (contentObject.dayString == content.dayString)){
-                    console.log('this content already exist in db'); 
+                    console.log('this content already exist in db');
                 }
                 else if ((!contentObject) || (contentObject.dayString != content.dayString)){
-                    
+
                     // clean old content and insert new day
-                    dbTool.cleanContentDb(classId); 
+                    dbTool.cleanContentDb(classId);
 
                     dbTool.insertContent(classId, content.dayString, content.contentString);
 
                     // send content to each id
                     dbTool.findId(classId).then((ids)=>{
-                        console.log(ids);
-                        for (i in ids){
-                            console.log('send to ' + ids[i]);
-                            bot.push(ids[i], content.contentString);
-                        }
+                        console.log('multicast to ' + ids);
+                        bot.push(ids, content.contentString);
                     });
 
 
