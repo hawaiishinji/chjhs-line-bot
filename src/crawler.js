@@ -55,7 +55,7 @@ const getContent = (selector, className) => {
         resultString = className + ' ' + dayString + '\n';
 
         const result = selector('div.ecbookdetail li,h5');
-        for(i=0;i<result.length;i++) {
+        for(let i = 0;i<result.length;i++) {
             console.log(result[i].name);
             //insert change line before header
             if (result[i].name == 'h5'){
