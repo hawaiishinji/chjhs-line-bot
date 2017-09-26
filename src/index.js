@@ -9,7 +9,7 @@ var bot = linebot({
   channelAccessToken:  process.env.ChannelAccessToken
 });
 
-const initialMessage = '目前僅支援鸚鵡班與一年忠～愛班\n'
+const initialMessage = '目前僅支援鸚鵡班與一年級所有班級\n'
                         +'請問你要關注哪一班\n'
                         +'請用"小幫手我要關注" 或 "小幫手我要退訂" 加上班級名稱來關注或退訂聯絡簿'
                         ;
