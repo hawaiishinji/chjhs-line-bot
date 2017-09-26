@@ -30,17 +30,22 @@ module.exports = {
   findId : function (classId) {
     // Get the documents collection
     return db.ref(`${classId}/ids`).once('value').then((snapshot)=>{
-      return Object.keys(snapshot.val());
+      if (snapshot && snapshot.val()){
+        return Object.keys(snapshot.val());
+      }
+      else {
+        return [];
+      }
     });
   }
   ,
   insertContent : function(classId, dayString, contentString){
-    db.ref(`${classId}/content`).set({dayString: dayString, contentString: contentString});
+    return db.ref(`${classId}/content`).set({dayString: dayString, contentString: contentString});
   }
   ,
   cleanContentDb : function (classId){
     // Get the documents collection
-    db.ref(`${classId}/content`).remove();
+    return db.ref(`${classId}/content`).remove();
   }
   ,
   findLastestContent: function (classId) {
@@ -54,10 +59,9 @@ module.exports = {
       snapshots.forEach((snapshot) => {
         const classId = snapshot.key;
         db.ref(`${classId}/ids/${id}`).remove();
-      }); 
+      });
     });
   }
 
 
 };
-

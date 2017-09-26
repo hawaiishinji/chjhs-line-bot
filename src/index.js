@@ -9,7 +9,7 @@ var bot = linebot({
   channelAccessToken:  process.env.ChannelAccessToken
 });
 
-const initialMessage = '目前僅支援鸚鵡班與一年孝班\n'
+const initialMessage = '目前僅支援鸚鵡班與一年忠～愛班\n'
                         +'請問你要關注哪一班\n'
                         +'請用"小幫手我要關注" 或 "小幫手我要退訂" 加上班級名稱來關注或退訂聯絡簿'
                         ;
@@ -29,7 +29,7 @@ const checkContentAndReply = (event, classId, className) => {
 
 bot.on('message', function(event) {
     //console.log(event); //把收到訊息的 event 印出來看看
-    var targetId = event.source.groupId? event.source.groupId : event.source.userId; 
+    var targetId = event.source.groupId? event.source.groupId : event.source.userId;
     if (event.message.type = 'text') {
         var msg = event.message.text;
         console.log('message ' + msg);

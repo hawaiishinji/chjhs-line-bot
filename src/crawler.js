@@ -1,3 +1,4 @@
+require("babel-polyfill");
 var Crawler = require('js-crawler');
 var he = require('he');
 var Cheerio = require('cheerio');
@@ -11,6 +12,12 @@ String.prototype.replaceAll = function (find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
 };
 
+var bot = linebot({
+  channelId:  process.env.ChannelId,
+  channelSecret:  process.env.ChannelSecret,
+  channelAccessToken:  process.env.ChannelAccessToken
+});
+
 const crawl = (url) =>{
   return new Promise((resolve, reject) => {
     crawler.crawl({
@@ -21,109 +28,87 @@ const crawl = (url) =>{
   });
 };
 
-
 const getSelector = (page) => {
-  return new Promise((resolve, reject) => {
 
-    const html = page.content.toString();
-    const selector = Cheerio.load(html);
-    resolve(selector);
-  });
+  const html = page.content.toString();
+  const selector = Cheerio.load(html);
+  return selector;
 };
 
 const checkHasContent = (selector) => {
-  return new Promise((resolve, reject) =>{
-    const lis = selector('div.ecbookdetail li');
-    if (lis.length > 0){
-      resolve(selector);
-    }
-    else{
-      throw new Error('no content!');
-    }
-  });
-
+  const lis = selector('div.ecbookdetail li');
+  return lis.length >0;
 };
 
 const getContent = (selector, className) => {
-  return new Promise((resolve, reject) =>{
-    var resultString = '';
+  var resultString = '';
 
-    //get the day string
-    const mon = selector('div.todayarea .mm');
-    const day = selector('div.todayarea .dd');
-    var dayString = selector(mon[0]).text() + ' ' +  selector(day[0]).text();
-    resultString = className + ' ' + dayString + '\n';
+  //get the day string
+  const mon = selector('div.todayarea .mm');
+  const day = selector('div.todayarea .dd');
+  var dayString = selector(mon[0]).text() + ' ' +  selector(day[0]).text();
+  resultString = className + ' ' + dayString + '\n';
 
-    const result = selector('div.ecbookdetail li,h5');
-    for(let i = 0;i<result.length;i++) {
-      console.log(result[i].name);
-      //insert change line before header
-      if (result[i].name == 'h5'){
-        resultString += '\n';
-      }
-      selector('i').remove();
-      //resultString += selector(result[i]).text().replaceAll('[\t]' ,'') + '\n';
-
-      //convert <br> to change line
-      resultString += he.decode(selector(result[i]).html()).replaceAll('<br>' ,'\n\n') + '\n';
-      //insert change line after header
-      if (result[i].name == 'h5'){
-        resultString += '\n';
-      }
+  const result = selector('div.ecbookdetail li,h5');
+  for(let i = 0;i<result.length;i++) {
+    console.log(result[i].name);
+    //insert change line before header
+    if (result[i].name == 'h5'){
+      resultString += '\n';
     }
-    console.log(resultString);
+    selector('i').remove();
+    //resultString += selector(result[i]).text().replaceAll('[\t]' ,'') + '\n';
 
-    resolve({dayString: dayString, contentString: resultString});
-  });
+    //convert <br> to change line
+    resultString += he.decode(selector(result[i]).html()).replaceAll('<br>' ,'\n\n') + '\n';
+    //insert change line after header
+    if (result[i].name == 'h5'){
+      resultString += '\n';
+    }
+  }
+  console.log(resultString);
+
+  return {dayString: dayString, contentString: resultString};
 };
 
-function crawlTheUrl(theClass){
+async function crawlTheUrl(theClass){
   const {url, name} = theClass;
   const classId = theClass.id;
 
-  return crawl(url)
-  .then((page) => {
-    return getSelector(page);
-  })
-  .then((selector) =>{
-    return checkHasContent(selector);
-  })
-  .then((selector) => {
-    return getContent(selector, name);
-  })
-  .then((content) => {
+  var page = await crawl(url);
+  var selector = getSelector(page);
 
-    console.log(content);
+  if (!checkHasContent(selector)){
+    console.log('no content');
+    return;
+  }
+  var content = getContent(selector, name);
 
-    dbTool.findLastestContent(classId).then((contentObject) =>{
+  console.log(content);
 
-      if ((contentObject) && (contentObject.dayString == content.dayString)){
-        console.log('this content already exist in db');
-      }
-      else if ((!contentObject) || (contentObject.dayString != content.dayString)){
+  var contentObject = await dbTool.findLastestContent(classId);
 
-        // clean old content and insert new day
-        dbTool.cleanContentDb(classId);
+  if ((contentObject) && (contentObject.dayString == content.dayString)){
+    console.log('this content already exist in db');
+  }
+  else if ((!contentObject) || (contentObject.dayString != content.dayString)){
 
-        dbTool.insertContent(classId, content.dayString, content.contentString);
+    await dbTool.cleanContentDb(classId);
 
-        // send content to each id
-        dbTool.findId(classId).then((ids)=>{
-          console.log('multicast to ' + ids);
-          bot.push(ids, content.contentString);
-        });
-      }
-    });
-  })
-  .catch((err) => console.log(err.message));
+    await dbTool.insertContent(classId, content.dayString, content.contentString);
+
+    // send content to each id
+    var ids = await dbTool.findId(classId);
+    console.log('multicast to ' + ids);
+
+    await bot.push(ids, content.contentString);
+  }
 }
 
-var bot = linebot({
-  channelId:  process.env.ChannelId,
-  channelSecret:  process.env.ChannelSecret,
-  channelAccessToken:  process.env.ChannelAccessToken
-});
+async function run (){
+  for (let i in classes){
+    await crawlTheUrl(classes[i]);
+  }
+}
 
-crawlTheUrl(classes[0]).then(() =>{
-  crawlTheUrl(classes[1]);
-});
+run();
