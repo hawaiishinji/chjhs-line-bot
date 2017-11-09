@@ -88,10 +88,12 @@ async function crawlTheUrl(theClass){
 
   var contentObject = await dbTool.findLastestContent(classId);
 
-  if ((contentObject) && (contentObject.dayString == content.dayString)){
+  if ((contentObject) && (contentObject.dayString == content.dayString)
+    && (content.contentString == contentObject.contentString)){
     console.log('this content already exist in db');
   }
-  else if ((!contentObject) || (contentObject.dayString != content.dayString)){
+  else if ((!contentObject) || (contentObject.dayString != content.dayString)
+    || (content.contentString != contentObject.contentString)){
 
     await dbTool.cleanContentDb(classId);
 
