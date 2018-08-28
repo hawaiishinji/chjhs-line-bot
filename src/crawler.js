@@ -111,6 +111,7 @@ async function run (){
   for (let i in classes){
     await crawlTheUrl(classes[i]);
   }
+  dbTool.endDb()
 }
 
 run();

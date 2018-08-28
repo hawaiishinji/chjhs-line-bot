@@ -13,7 +13,7 @@ const db = firebase.database();
 
 module.exports = {
   endDb: function (){
-    app.delete();
+    db.goOffline()
   }
   ,
   insertId: function (classId, id) {
