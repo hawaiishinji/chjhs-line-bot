@@ -32,6 +32,11 @@ module.exports = [
   },
   // 幼稚園
   {
+    id: 'ECKID2A',
+    url: 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID2A',
+    name:'金魚班'
+  },
+  {
     id: 'ECKID2B',
     url: 'http://www.chjhs.tp.edu.tw/dispPageBox/KIDFULL.aspx?ddsPageID=KIDECONTACT&&classid=ECKID2B',
     name:'螃蟹班'
