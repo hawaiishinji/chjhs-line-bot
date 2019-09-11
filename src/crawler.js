@@ -99,11 +99,11 @@ async function crawlTheUrl(theClass){
 
     await dbTool.insertContent(classId, content.dayString, content.contentString);
 
-    // send content to each id
-    var ids = await dbTool.findId(classId);
-    console.log('multicast to ' + ids);
+    // ### do not push content anymore
+    // var ids = await dbTool.findId(classId);
+    // console.log('multicast to ' + ids);
 
-    await bot.push(ids, content.contentString);
+    // await bot.push(ids, content.contentString);
   }
 }
 
