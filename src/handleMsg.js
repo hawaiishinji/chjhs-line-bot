@@ -35,18 +35,20 @@ module.exports = async function handleMessage(targetId, msg, reply) {
     const subscribeSnapshot = await dbTool.findSubscribe(targetId)
     // console.log('subscribe', subscribeSnapshot)
 
-    const classIds = Object.keys(subscribeSnapshot)
+    if (subscribeSnapshot) {
+        const classIds = Object.keys(subscribeSnapshot)
 
-    for (var i = 0; i < classIds.length; i ++) {
-        const classId = classIds[i]
-        const content = await dbTool.findLastestContent(classId)
+        for (var i = 0; i < classIds.length; i ++) {
+            const classId = classIds[i]
+            const content = await dbTool.findLastestContent(classId)
 
-        if (!content.dayString || content.dayString === '') {
-            //do nothing
-        } else if (content.dayString !== subscribeSnapshot[classId].dayString) {
-            await dbTool.updateIdSubscribeClassDayString(classId, targetId, content.dayString)
+            if (!content.dayString || content.dayString === '') {
+                //do nothing
+            } else if (content.dayString !== subscribeSnapshot[classId].dayString) {
+                await dbTool.updateIdSubscribeClassDayString(classId, targetId, content.dayString)
 
-            await reply(content.contentString)
+                await reply(content.contentString)
+            }
         }
     }
 }
@@ -61,7 +63,10 @@ function unsubscribe(classId, targetId) {
 
 async function findHasSubscribe(classId, targetId) {
     const subscribe = await dbTool.findSubscribe(targetId)
-    return Object.keys(subscribe).indexOf(classId) > -1;
+    if (subscribe)
+        return Object.keys(subscribe).indexOf(classId) > -1;
+    else 
+        return false;
 }
 
 function checkMsgContainClass(msg) {
