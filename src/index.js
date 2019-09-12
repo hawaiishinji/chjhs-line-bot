@@ -1,7 +1,7 @@
 var linebot = require('linebot');
 var express = require('express');
 var dbTool = require('./db');
-var classes = require('./classes');
+var handleMsg = require('./handleMsg')
 
 var bot = linebot({
   channelId:  process.env.ChannelId,
@@ -14,61 +14,19 @@ const initialMessage = '目前僅支援大象班,綿羊班,長頸鹿班與三年
                         +'請用"小幫手我要關注" 或 "小幫手我要退訂" 加上班級名稱來關注或退訂聯絡簿'
                         ;
 
-const checkContentAndReply = (event, classId, className) => {
-    dbTool.findLastestContent(classId).then((content) =>{
-      if (content){
-        event.reply(content.contentString);
-      }
-      else{
-        event.reply('已關注' + className);
-      }
-    });
 
-}
-
-
-bot.on('message', function(event) {
-    //console.log(event); //把收到訊息的 event 印出來看看
-    var targetId = event.source.groupId? event.source.groupId : event.source.userId;
-    if (event.message.type = 'text') {
-        var msg = event.message.text;
-        console.log('message ' + msg);
-        var hit = false;
-        if (msg && msg.includes('小幫手我要')){
-          if (msg.includes('關注')){
-
-            for (var i in classes){
-              if (msg.includes(classes[i].name)){
-                dbTool.insertId(classes[i].id, targetId);
-                checkContentAndReply(event, classes[i].id, classes[i].name);
-                hit = true;
-              }
-            }
-            if (!hit){
-              event.reply('要關注哪一班?');
-            }
-
-            return;
-          } else if (msg.includes('退訂')){
-
-            for (var i in classes){
-              if (msg.includes(classes[i].name)){
-                dbTool.removeId(classes[i].id, targetId);
-                event.reply('已退訂' + classes[i].name);
-                hit = true;
-              }
-            }
-            if (!hit){
-              event.reply('要退訂哪一班?');
-            }
-
-            return;
-          } 
-        } else if (msg.includes('check')) {
-          checkHasNotSentContent(targetId);
-        }
+bot.on("message", function(event) {
+  //console.log(event); //把收到訊息的 event 印出來看看
+  var targetId = event.source.groupId ? event.source.groupId : event.source.userId;
+  if ((event.message.type = "text")) {
+    var msg = event.message.text;
+    console.log("message " + msg);
+    if (msg) {
+      handleMsg(targetId, msg, message => {
+        event.reply(message);
+      });
     }
-
+  }
 });
 
 function checkHasNotSentContent(targetId) {
