@@ -1,5 +1,4 @@
 var firebase = require('firebase');
-
 var config = {
   apiKey: process.env.FirebaseApiKey,
   authDomain: process.env.FirebaseAuthDomain,
@@ -17,13 +16,24 @@ module.exports = {
   }
   ,
   insertId: function (classId, id) {
-    db.ref(`${classId}/ids/${id}`).set(true);
+    return db.ref(`ids/${id}/subscribe/${classId}/dayString`).set('');
   }
 
   ,
-
+  updateIdSubscribeClassDayString: function (classId, id, dayString) {
+    return db.ref(`ids/${id}/subscribe/${classId}/dayString`).set(dayString);
+  }
+  ,
+  findSubscribe: function(id) {
+    return db.ref(`ids/${id}`).once('value').then((snapshot)=>{
+      if (snapshot && snapshot.val()){
+        return snapshot.val().subscribe;
+      }
+    })
+  }
+  ,
   removeId: function (classId, id){
-    db.ref(`${classId}/ids/${id}`).remove();
+    return db.ref(`ids/${id}/subscribe/${classId}`).remove();
   }
 
   ,

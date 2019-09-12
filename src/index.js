@@ -47,8 +47,9 @@ bot.on('message', function(event) {
             if (!hit){
               event.reply('要關注哪一班?');
             }
-          }
-          else if (msg.includes('退訂')){
+
+            return;
+          } else if (msg.includes('退訂')){
 
             for (var i in classes){
               if (msg.includes(classes[i].name)){
@@ -60,10 +61,19 @@ bot.on('message', function(event) {
             if (!hit){
               event.reply('要退訂哪一班?');
             }
-          }
+
+            return;
+          } 
+        } else if (msg.includes('check')) {
+          checkHasNotSentContent(targetId);
         }
     }
+
 });
+
+function checkHasNotSentContent(targetId) {
+  dbTool.findSubscribe(targetId);  
+}
 
 bot.on('follow', function(event) {
     console.log(event);
