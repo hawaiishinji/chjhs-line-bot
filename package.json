@@ -23,5 +23,8 @@
     "postinstall": "babel src -d lib",
     "start": "node lib/index.js",
     "crawler": "node lib/crawler.js"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
