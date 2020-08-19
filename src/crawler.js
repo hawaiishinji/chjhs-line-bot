@@ -68,7 +68,16 @@ const getContent = (selector, className) => {
   }
   console.log(resultString);
 
-  return {dayString: dayString, contentString: resultString};
+  return {dayString: dayString + ' ' + hashCode(resultString), contentString: resultString};
+};
+
+const hashCode = function(s) {
+  var h = 0, l = s.length, i = 0;
+  if ( l > 0 )
+    while (i < l)
+      h = (h << 5) - h + s.charCodeAt(i++) | 0;
+  console.log('hash', h)
+  return h;
 };
 
 async function crawlTheUrl(theClass){
