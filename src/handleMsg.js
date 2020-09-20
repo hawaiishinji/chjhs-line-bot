@@ -48,6 +48,8 @@ module.exports = async function handleMessage(targetId, msg, reply) {
                 await dbTool.updateIdSubscribeClassDayString(classId, targetId, content.dayString)
 
                 await reply(content.contentString)
+
+                return
             }
         }
     }
